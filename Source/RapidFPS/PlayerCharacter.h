@@ -45,6 +45,11 @@ public:
 	UPROPERTY(EditAnywhere, BluePrintReadOnly, Category = "Input")
 	UInputAction* MoveAction;
 
+	UPROPERTY(EditAnywhere, BluePrintReadOnly, Category = "Input")
+
+	UInputAction* LookAction;
+
+
 	void Move(const struct FInputActionValue& Value);
 	void Look(const struct FInputActionValue& Value);
 	void Jump(const struct FInputActionValue& Value);
