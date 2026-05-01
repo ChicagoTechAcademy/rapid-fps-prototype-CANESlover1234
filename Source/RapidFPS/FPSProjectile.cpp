@@ -6,8 +6,8 @@
 // Sets default values
 AFPSProjectile::AFPSProjectile()
 {
- 	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
-	PrimaryActorTick.bCanEverTick = true;
+    // Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
+    PrimaryActorTick.bCanEverTick = true;
     if (!ProjectileMovementComponent)
     {
         // Use this component to drive this projectile's movement.
@@ -20,6 +20,28 @@ AFPSProjectile::AFPSProjectile()
         ProjectileMovementComponent->Bounciness = 0.3f;
         ProjectileMovementComponent->ProjectileGravityScale = 0.0f;
     }
+
+    if (!ProjectileMeshComponent)
+    {
+        ProjectileMeshComponent = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("ProjectileMeshComponent"));
+        static ConstructorHelpers::FObjectFinder<UStaticMesh>Mesh(TEXT("'/Game/Sphere.Sphere'"));
+        if (Mesh.Succeeded())
+        {
+            ProjectileMeshComponent->SetStaticMesh(Mesh.Object);
+        }
+
+        static ConstructorHelpers::FObjectFinder<UMaterial>Material(TEXT("'/Game/SphereMaterial.SphereMaterial'"));
+        if (Material.Succeeded())
+        {
+            ProjectileMaterialInstance = UMaterialInstanceDynamic::Create(Material.Object, ProjectileMeshComponent);
+        }
+        ProjectileMeshComponent->SetMaterial(0, ProjectileMaterialInstance);
+        ProjectileMeshComponent->SetRelativeScale3D(FVector(0.09f, 0.09f, 0.09f));
+        ProjectileMeshComponent->SetupAttachment(RootComponent);
+    }
+
+    // Delete the projectile after 3 seconds.
+    InitialLifeSpan = 1.0f;
 
     if (!RootComponent)
     {
