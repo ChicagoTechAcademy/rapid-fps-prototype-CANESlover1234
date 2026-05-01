@@ -50,4 +50,9 @@ void AFPSProjectile::Tick(float DeltaTime)
 	Super::Tick(DeltaTime);
 
 }
+// Function that initializes the projectile's velocity in the shoot direction.
+void AFPSProjectile::FireInDirection(const FVector& ShootDirection)
+{
+    ProjectileMovementComponent->Velocity = ShootDirection * ProjectileMovementComponent->InitialSpeed;
+}
 
