@@ -17,6 +17,13 @@ public:
 	// Sets default values for this actor's properties
 	AFPSProjectile();
 
+	// Projectile mesh
+	UPROPERTY(VisibleDefaultsOnly, Category = Projectile)
+	UStaticMeshComponent* ProjectileMeshComponent;
+	// Projectile material
+	UPROPERTY(VisibleDefaultsOnly, Category = Movement)
+	UMaterialInstanceDynamic* ProjectileMaterialInstance;
+
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;

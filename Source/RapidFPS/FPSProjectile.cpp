@@ -19,10 +19,14 @@ AFPSProjectile::AFPSProjectile()
         ProjectileMovementComponent->bShouldBounce = true;
         ProjectileMovementComponent->Bounciness = 0.3f;
         ProjectileMovementComponent->ProjectileGravityScale = 0.0f;
+
     }
+    // Delete the projectile after 3 seconds.
+    InitialLifeSpan = 3.0f;
 
     if (!ProjectileMeshComponent)
     {
+
         ProjectileMeshComponent = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("ProjectileMeshComponent"));
         static ConstructorHelpers::FObjectFinder<UStaticMesh>Mesh(TEXT("'/Game/Sphere.Sphere'"));
         if (Mesh.Succeeded())
