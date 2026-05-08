@@ -17,7 +17,7 @@ AFPSProjectile::AFPSProjectile()
         ProjectileMovementComponent->MaxSpeed = 3000.0f;
         ProjectileMovementComponent->bRotationFollowsVelocity = true;
         ProjectileMovementComponent->bShouldBounce = true;
-        ProjectileMovementComponent->Bounciness = 0.3f;
+        ProjectileMovementComponent->Bounciness = 6.3f;
         ProjectileMovementComponent->ProjectileGravityScale = 0.0f;
 
     }
@@ -45,7 +45,7 @@ AFPSProjectile::AFPSProjectile()
     }
 
     // Delete the projectile after 3 seconds.
-    InitialLifeSpan = 1.0f;
+    InitialLifeSpan = 30.0f;
 
     if (!RootComponent)
     {
@@ -60,20 +60,27 @@ AFPSProjectile::AFPSProjectile()
         CollisionComponent->InitSphereRadius(15.0f);
         // Set the root component to be the collision component.
         RootComponent = CollisionComponent;
+
+
+        // Set the sphere's collision profile name to "Projectile".
+        CollisionComponent->BodyInstance.SetCollisionProfileName(TEXT("Projectile"));
+
+        // Event called when component hits something.
+        CollisionComponent->OnComponentHit.AddDynamic(this, &AFPSProjectile::OnHit);
     }
 }
 
 // Called when the game starts or when spawned
 void AFPSProjectile::BeginPlay()
 {
-	Super::BeginPlay();
-	
+    Super::BeginPlay();
+
 }
 
 // Called every frame
 void AFPSProjectile::Tick(float DeltaTime)
 {
-	Super::Tick(DeltaTime);
+    Super::Tick(DeltaTime);
 
 }
 // Function that initializes the projectile's velocity in the shoot direction.
@@ -82,3 +89,24 @@ void AFPSProjectile::FireInDirection(const FVector& ShootDirection)
     ProjectileMovementComponent->Velocity = ShootDirection * ProjectileMovementComponent->InitialSpeed;
 }
 
+// Function that is called when the projectile hits something.
+void AFPSProjectile::OnHit(UPrimitiveComponent* HitComponent, AActor* OtherActor, UPrimitiveComponent* OtherComponent, FVector NormalImpulse, const FHitResult& Hit)
+{
+    if (OtherActor != this && OtherComponent->IsSimulatingPhysics())
+    {
+        OtherComponent->AddImpulseAtLocation(ProjectileMovementComponent->Velocity * 100.0f, Hit.ImpactPoint);
+    }
+
+    if (ProjectileMovementComponent)
+    {
+        ProjectileMovementComponent->StopMovementImmediately();
+        ProjectileMovementComponent->SetActive(false);
+    }
+
+    if (CollisionComponent)
+    {
+        CollisionComponent->SetSimulatePhysics(true);
+        CollisionComponent->AddImpulse(ProjectileMovementComponent->Velocity);
+    }
+   // Destroy();  
+}
